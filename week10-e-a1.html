@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>wk10-e-a</title>
+  <style>
+    #container{display: grid; width: 70%;margin: 0 auto;grid-template-columns:2fr 2fr 2fr 1fr ;grid-auto-rows: 3em;}
+
+  /*no additional css is required*/  </style>
+</head>
+<!-- do not insert additional id attributes to any element -->
+<!-- do not remove any inline styles -->
+<body>
+  <form id="myform" action="" onsubmit="return false">
+    <div id="container">
+      <h3 style="grid-column: 1/span 4">College Admission Calculator</h3>
+      <div style="grid-column: 1/span 4;">Please enter the required information</div>
+      <div>Are you over 25?</div>
+      <div>
+        <select name="" id="adult">
+          <option value="0">select</option>
+          <option value="under25">Under 25</option>
+          <option value="over25">Over 25</option>
+        </select>
+      </div>
+      <div style="grid-column:auto/span 2"></div>
+
+
+      <div></div><div>subject/exam</div><div>subject grades</div><div>points</div>
+
+      <div class="hideall matured">English Language or Equivalent</div>
+      <div class="hideall matured">
+        <input type="radio" name="english" onclick="clearPoints()">GCE O Level
+        <input type="radio" name="english" onclick="clearPoints()">IGCE O level
+        <input type="radio" name="english" onclick="clearPoints()">IELTS
+      </div>
+      <div class="hideall matured">
+        <select name="engolevel" id="engolevel" onChange="engPoints()">
+          <option value="0">select</option>
+          <option value="A1">A1</option>
+          <option value="A2">A2</option>
+          <option value="B3">B3</option>
+          <option value="B4">B4</option>
+          <option value="C5">C5</option>
+          <option value="C6">C6</option>
+          <option value="F">F</option>
+        </select>
+        <select name="engigcse" id="engigcse" onChange="engPoints()">
+          <option value="0">select</option>
+          <option value="A*">A*</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+          <option value="E">E</option>
+          <option value="F">F</option>
+        </select>
+        <select name="engielts" id="engielts" onChange="engPoints()">
+          <option value="0">select</option>
+          <option value="9.0">9.0</option>
+          <option value="8.5">8.5</option>
+          <option value="8.0">8.0</option>
+          <option value="7.5">7.5</option>
+          <option value="7.0">7.0</option>
+          <option value="6.5">6.5</option>
+          <option value="6.0">6.0</option>
+        </select>
+      </div>
+      <div class="hideall matured" id="engpoints"></div>
+
+
+      <div class="hideall matured">Mathematics</div>
+      <div class="hideall matured">
+        <select name="maths" id="maths">
+          <option value="0">select</option>
+          <option value="mathematics D">mathematics D</option>
+          <option value="additional mathematics">additional mathematics</option>
+        </select>
+      </div>
+
+      <div class="hideall matured">
+        <select name="mathsgrade" id="mathsgrade" onChange="mathPoints()">
+          <option value="0">select</option>
+          <option value="A1">A1</option>
+          <option value="A2">A2</option>
+          <option value="B3">B3</option>
+          <option value="B4">B4</option>
+          <option value="C5">C5</option>
+          <option value="C6">C6</option>
+          <option value="F">F</option>
+        </select>
+      </div>
+
+      <div class="hideall matured" id="mathspoints"></div>
+
+      <div class="hideall">Relevant subject #1</div>
+      <div class="hideall">
+        <select name="relevant1" id="relevant1">
+          <option value="0">select</option>
+          <option value="computer studies">computer studies</option>
+          <option value="computer sciences">computer sciences</option>
+          <option value="mathematics D">mathematics D</option>
+          <option value="additional mathematics">additional mathematics</option>
+        </select>
+      </div>
+
+      <div class="hideall">
+        <select name="relevant1grade" id="relevant1grade" onChange="relPoints()">
+          <option value="0">select</option>
+          <option value="A1">A1</option>
+          <option value="A2">A2</option>
+          <option value="B3">B3</option>
+          <option value="B4">B4</option>
+          <option value="C5">C5</option>
+          <option value="C6">C6</option>
+          <option value="F">F</option>
+        </select>
+      </div>
+
+      <div class="hideall" id="relevant1points"></div>
+
+      <div class="hideall matured">
+        <button id="btnresult" style="align-self: center;" onclick="finalPoints()">Click to show eligibility status</button>
+      </div>
+
+      <div class="hideall matured" style="grid-column:2/span 2" id="status"></div>
+
+      <div class="hideall matured" id="totalpoints"></div>
+
+      <div style="grid-column:1/span 3"></div>
+
+      <div><button onclick="resetForm()">reset form</button></div>
+
+    </div>
+  </form>
+
+<script>
+  
+  var btnResult = document.getElementById('btnresult');
+  var mathsForm = document.getElementById('maths');
+  var mathsGrade = document.getElementById('mathsgrade');
+  var relevantForm = document.getElementById('relevant1');
+  var relevantGrade = document.getElementById('relevant1grade');
+  
+  var formMain = document.getElementsByClassName('hideall'); 
+
+  var ageList = document.getElementById('adult');
+
+  // getElementsByName returns a nodelist of elements and contains no value property.
+  var engbtn = document.getElementsByName('english');
+
+  // Display the form based on age group
+  // (Start)
+  ageList.addEventListener('change', function handleChange(event){
+    var uAge = ageList.options[ageList.selectedIndex].value;
+    function disable2(){
+      var mathsForm = document.getElementById('maths');
+      var relevantForm = document.getElementById('relevant1');
+      mathsForm.disabled = true;
+      relevantForm.disabled = true;
+      mathsForm.selectedIndex = 0;
+      relevantForm.selectedIndex = 0;
+
+      document.getElementById('engpoints').innerHTML = null;
+      document.getElementById('mathspoints').innerHTML = null;
+      document.getElementById('relevant1points').innerHTML = null;
+      document.getElementById('totalpoints').innerHTML = null;
+      document.getElementById('status').innerHTML = null;
+      
+      engbtn[0].checked = false;
+      engbtn[1].checked = false;
+      engbtn[2].checked = false;
+      mathsGrade.selectedIndex = 0;
+      relevantGrade.selectedIndex = 0;
+      mathsGrade.disabled = true;
+      relevantGrade.disabled = true;
+    }
+    if (uAge === '0'){
+      for (const hideall of formMain){
+        hideall.style.display = 'none';
+      }
+    }
+    else if (uAge === 'over25'){
+      disable2();
+      for (const hideall of formMain){
+        hideall.style.display = 'block';
+      }
+      for (var i = 8; i < 12; i++){
+        formMain[i].style.display = 'none';
+      }
+      btnResult.disabled = true;
+      mathsForm.disabled = true;
+      mathsGrade.disabled = true;
+      engolevel.selectedIndex = 0;
+      engigcse.selectedIndex = 0;
+      engielts.selectedIndex = 0;
+    }
+    else if (uAge === 'under25'){
+      disable2();
+      for (const hideall of formMain){
+        hideall.style.display = 'block';
+      }
+      btnResult.disabled = true;
+      mathsForm.disabled = true;
+      mathsGrade.disabled = true;
+      relevantForm.disabled = true;
+      relevantGrade.disabled = true;
+      engolevel.selectedIndex = 0;
+      engigcse.selectedIndex = 0;
+      engielts.selectedIndex = 0;
+    }
+  });
+  // (End)
+
+  // english subject functions
+  document.body.addEventListener('change', function (e){
+    function disable1(){
+      document.getElementById('maths').disabled = false;
+      document.getElementById('relevant1').disabled = false;
+      document.getElementById('totalpoints').innerHTML = null;
+      document.getElementById('status').innerHTML = null;
+      btnResult.disabled = false;
+      mathsGrade.disabled = false;
+      relevantGrade.disabled = false;
+    }
+    if (engbtn[0].checked){
+      document.getElementById("engolevel").style.display = 'block';
+      document.getElementById("engigcse").style.display = 'none';
+      document.getElementById("engielts").style.display = 'none';
+      disable1();
+
+    }else if (engbtn[1].checked){
+      document.getElementById("engolevel").style.display = 'none';
+      document.getElementById("engigcse").style.display = 'block';
+      document.getElementById("engielts").style.display = 'none';
+      disable1();
+
+    }else if (engbtn[2].checked){
+      document.getElementById("engolevel").style.display = 'none';
+      document.getElementById("engigcse").style.display = 'none';
+      document.getElementById("engielts").style.display = 'block';
+      disable1();
+    }
+    else{
+      document.getElementById("engolevel").style.display = 'none';
+      document.getElementById("engigcse").style.display = 'none';
+      document.getElementById("engielts").style.display = 'none';
+    }
+  });
+
+  // Clear english points
+  function clearPoints(){
+    document.getElementById('engpoints').innerHTML = null;
+  }
+
+  // Display points for english language subject
+  function engPoints(){
+    if (engbtn[0].checked){
+      var option = document.getElementById('engolevel').selectedIndex;
+    }else if (engbtn[1].checked){
+      var option = document.getElementById('engigcse').selectedIndex;
+    }else if (engbtn[2].checked){
+      var option = document.getElementById('engielts').selectedIndex;
+    }
+
+    var ePoints = 7;
+    for (var i = option; i < 7; i++){
+      ePoints--;
+    }
+    if (ePoints == 0){
+        ePoints = null;
+    }
+    document.getElementById('engpoints').innerHTML = ePoints;
+  }
+
+  // clear math points
+  mathsForm.addEventListener('change', function(){
+    document.getElementById('mathspoints').innerHTML = null;
+    document.getElementById('totalpoints').innerHTML = null;
+    document.getElementById('status').innerHTML = null;
+    mathsGrade.selectedIndex = 0;
+
+    // remove similar subject on relevant subject 1 with maths
+    var uAge = ageList.options[ageList.selectedIndex].value;
+    if (uAge == 'under25'){
+      var mathSub = document.getElementById('maths').value;
+      var relevantForm = document.getElementById('relevant1');
+      if (mathSub == relevantForm.options[3].value){
+        relevantForm.options[3].disabled = true;
+        relevantForm.options[4].disabled = false;
+      }else if(mathSub === relevantForm.options[4].value){
+        relevantForm.options[3].disabled = false; 
+        relevantForm.options[4].disabled = true;     
+      }else{
+        relevantForm.options[3].disabled = false; 
+        relevantForm.options[4].disabled = false; 
+      }
+    } 
+    
+    document.getElementById('mathspoints').innerHTML = null;
+  });
+
+  // math points function
+  function mathPoints(){
+    document.getElementById('totalpoints').innerHTML = null;
+    document.getElementById('status').innerHTML = null;
+    var mGrade = document.getElementById('mathsgrade').selectedIndex;
+    var mPoints = 7;
+    for (var j = mGrade; j < 7; j++){
+      mPoints--;
+    }
+
+    if (mPoints == 0){
+      mPoints = null;
+    }
+    document.getElementById('mathspoints').innerHTML = mPoints;
+  }
+
+  // relevant subject points function
+  relevantForm.addEventListener('change', function(){
+    document.getElementById('totalpoints').innerHTML = null;
+    document.getElementById('status').innerHTML = null;
+    relevantGrade.selectedIndex = 0;
+
+    var relSub = document.getElementById('relevant1').value;
+    if (relSub == 'computer sciences'){
+      relevantGrade.options[5].disabled = true;
+      relevantGrade.options[6].disabled = true;
+      relevantGrade.options[7].disabled = true;
+    }else{
+      relevantGrade.options[5].disabled = false;
+      relevantGrade.options[6].disabled = false;
+      relevantGrade.options[7].disabled = false;
+    }
+    document.getElementById('relevant1points').innerHTML = null;
+  });
+  function relPoints(){
+    document.getElementById('totalpoints').innerHTML = null;
+    document.getElementById('status').innerHTML = null;
+    var rGrade = document.getElementById('relevant1grade').selectedIndex;
+    var rPoints = 7;
+    for (var k = rGrade; k < 7; k++){
+      rPoints--;
+    }
+
+    if (rPoints == 0){
+      rPoints = null;
+    }
+    document.getElementById('relevant1points').innerHTML = rPoints;
+  }
+
+
+  // Hide all elements
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.getElementById("myform").reset(); 
+    for (const hideall of formMain){
+      hideall.style.display = 'none';
+    }
+  });
+
+  // Check users total points and eligibility
+  function finalPoints(){
+    var uAge = ageList.options[ageList.selectedIndex].value;
+    ePoints = parseInt(document.getElementById('engpoints').innerHTML);
+    mPoints = parseInt(document.getElementById('mathspoints').innerHTML);
+    rPoints = parseInt(document.getElementById('relevant1points').innerHTML);
+
+    mathsForm = document.getElementById('maths').value;
+    relevantForm = document.getElementById('relevant1').value;
+
+    if (mathsForm == 0 || relevantForm == 0){
+      document.getElementById('status').style.color = "red";
+      document.getElementById('status').innerHTML = "You did not specify all subjects";
+    }
+      if (uAge == 'under25'){
+        if (mathsForm == 0 || relevantForm == 0){
+          document.getElementById('status').style.color = "red";
+          document.getElementById('status').innerHTML = "You did not specify all subjects";
+        }else{
+          var u25Points = ePoints + mPoints + rPoints;
+          document.getElementById('totalpoints').innerHTML = u25Points;
+          if (u25Points <= 18){
+            document.getElementById('status').style.color = "blue";
+            document.getElementById('status').innerHTML = "Eligible";
+          }else{
+            document.getElementById('status').style.color = "red";
+            document.getElementById('status').innerHTML = "Not Eligible";
+          }
+        }
+      }
+      else if (uAge == 'over25'){
+        if (mathsForm == 0){
+          document.getElementById('status').style.color = "red";
+          document.getElementById('status').innerHTML = "You did not specify all subjects";
+        }else{
+          var o25Points = ePoints + mPoints;
+          document.getElementById('totalpoints').innerHTML = o25Points;
+          if (o25Points <= 12){
+            document.getElementById('status').style.color = "blue";
+            document.getElementById('status').innerHTML = "Eligible as matures applicants";
+          }else{
+            document.getElementById('status').style.color = "red";
+            document.getElementById('status').innerHTML = "Not Eligible due to points exceed 12";
+          }
+        }
+      }
+    }
+
+  // Reset form button
+  function resetForm(){
+    document.getElementById("myform").reset();
+    for (const hideall of formMain){
+        hideall.style.display = 'none';
+      }
+    document.getElementById('engpoints').innerHTML = null;
+    document.getElementById('mathspoints').innerHTML = null;
+    document.getElementById('relevant1points').innerHTML = null;
+    document.getElementById('totalpoints').innerHTML = null;
+    document.getElementById('status').innerHTML = null;
+    document.getElementById('maths').disabled = true;
+    document.getElementById('relevant1').disabled = true;
+    relevantGrade.selectedIndex = 0;
+    mathsGrade.selectedIndex = 0;
+    engbtn[0].checked = false;
+    engbtn[1].checked = false;
+    engbtn[2].checked = false;
+  }
+
+</script>
+</body>
+</html>
